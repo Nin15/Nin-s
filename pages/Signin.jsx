@@ -34,7 +34,7 @@ export default function SignIn() {
 
       const token = await res.json();
       document.cookie = `token=${token}; path=/; max-age=86400`;
-      navigate("/Homepage");
+      navigate("/");
     } catch {
       setAuthError(true);
     } finally {

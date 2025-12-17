@@ -63,7 +63,7 @@ export default function Profile() {
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-rose-50 via-pink-50 to-lilac-100 px-6 py-10 flex flex-col items-center font-['Playfair_Display']">
       {/* BACK */}
       <Link
-        to="/Homepage"
+        to="/"
         className="self-start mb-8 text-sm text-rose-400 hover:underline"
       >
         ← back to home
