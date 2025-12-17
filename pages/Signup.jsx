@@ -1,135 +1,127 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { Sparkles, Loader } from "lucide-react";
 
 export default function SignUp() {
-  const [SignUp, setSignUp] = useState(false);
-  const [data, setData] = useState(false);
-
   const navigate = useNavigate();
+
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const onSubmit = async (userInfo) => {
+    setLoading(true);
+    setServerError(null);
+
     try {
       const res = await fetch("https://node-hw12.vercel.app/auth/sign-up", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userInfo),
       });
 
-      console.log(userInfo);
-      const data1 = await res.json();
-      setData(data1);
-      setSignUp(true);
-    } catch (er) {
-      console.log(er.message);
+      if (!res.ok) throw new Error("SIGN_UP_FAILED");
+
+      setSuccess(true);
+    } catch {
+      setServerError("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
-  return (
-    <div className="w-[100%] gap-[40px] flex flex-col items-center justify-center ">
-      {" "}
-      {SignUp === false ? (
-        <div className="w-[100%] gap-[40px] flex flex-col items-center justify-center ">
-          <section className="mt-[20px]"> </section>
-          <section>
-            <h1 className="font-bold text-[30px]">Create Account</h1>
-            <p>
-              Already signed up?{" "}
-              <span
-                className="cursor-pointer "
-                onClick={() => {
-                  navigate("/Sign-in");
-                }}
-              >
-                Login
-              </span>
-            </p>
-          </section>
-          <form
-            className="flex gap-[40px] flex-col items-center justify-center"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div className="flex gap-[5px]">
-              <section className="flex flex-col">
-                <input
-                  className="w-[450px] h-[48px] placeholder:text-[16px] px-[20px] py-0 text-[16px] focus:outline-none bg-white border-1 rounded-2xl"
-                  {...register("fullName", { required: true })}
-                  placeholder="FullName"
-                />{" "}
-                {errors.fullName && (
-                  <span className="text-[16px] text-red-500  ">
-                    This field is required
-                  </span>
-                )}
-              </section>
-            </div>
-            <div className="flex flex-col">
-              <input
-                className="w-[450px] h-[48px] placeholder:text-[16px] px-[20px] py-0 text-[16px] focus:outline-none bg-white border-1 rounded-2xl"
-                {...register("email", { required: true })}
-                type="email"
-                placeholder="Email"
-              />
-              {errors.email && (
-                <span className="text-[16px] text-red-500  ">
-                  This field is required
-                </span>
-              )}
-            </div>
-            <div className="flex flex-col">
-              <input
-                className="w-[450px] h-[48px] placeholder:text-[16px] px-[20px] py-0 text-[16px] focus:outline-none bg-white border-1 rounded-2xl"
-                {...register("password", { required: true })}
-                placeholder="Password"
-                type="password"
-              />{" "}
-              {errors.password && (
-                <span className="text-[16px] text-red-500  ">
-                  This field is required
-                </span>
-              )}
-            </div>
 
-            <button
-              className="rounded-2xl text-white h-[52px] bg-black w-[450px]"
-              type="submit"
+  if (success) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gradient-to-br from-rose-50 via-pink-50 to-lilac-100 px-6">
+        <img src="/check-circle.png" alt="Success" className="w-24 h-24" />
+        <h1 className="text-3xl font-['Playfair_Display'] text-rose-500">Sign up successful</h1>
+        <button
+          onClick={() => navigate("/Sign-in")}
+          className="h-12 w-full max-w-md bg-gradient-to-r from-rose-400 via-pink-400 to-lilac-400 text-white rounded-2xl hover:scale-[1.02] transition"
+        >
+          Go to login
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-pink-50 to-lilac-100 px-6">
+      <div className="flex flex-col gap-8 w-full max-w-md bg-white/90 backdrop-blur-xl rounded-[2.5rem] p-8 shadow-[0_20px_50px_rgba(255,182,193,0.35)] border border-pink-200">
+        <header className="text-center space-y-2">
+          <h1 className="text-3xl font-['Playfair_Display'] text-rose-500 flex items-center justify-center gap-2">
+            <Sparkles size={24} /> Create account
+          </h1>
+          <p className="text-sm text-gray-600">
+            Already have an account?{' '}
+            <span
+              onClick={() => navigate("/Sign-in")}
+              className="cursor-pointer text-rose-400 underline hover:text-rose-500 transition"
             >
-              Create Account
-            </button>
-          </form>{" "}
-          <section className="flex justify-center gap-[5px] items-center ">
-            <hr className="w-[205px] border-solid" /> <p>or</p>{" "}
-            <hr className="w-[205px] border-solid" />
-          </section>
-          <section className="flex flex-col gap-[10px]">
-            <button className="w-[450px] h-[48px] text-[16px] bg-white border-1 rounded-1.5xl">
-              Continue With Google
-            </button>
-            <button className="w-[450px] h-[48px] text-[16px] bg-white  border-1 rounded-1.5xl">
-              Continue with Apple
-            </button>
-          </section>
-        </div>
-      ) : (
-        <div className="h-[100dvh] gap-[20px] flex flex-col justify-center items-center">
-          <img src="/check-circle.png" alt="CHECKED!" />
-          <h1 className="font-bold text-[30px]"> Sign Up successfully</h1>
+              Log in
+            </span>
+          </p>
+        </header>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <div>
+            <input
+              {...register("fullName", { required: true })}
+              placeholder="Full name"
+              className="w-full h-12 px-4 rounded-2xl border border-rose-200 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-300 placeholder:text-rose-300"
+            />
+            {errors.fullName && <p className="text-red-500 text-xs mt-1">Full name is required</p>}
+          </div>
+
+          <div>
+            <input
+              {...register("email", { required: true })}
+              type="email"
+              placeholder="Email"
+              className="w-full h-12 px-4 rounded-2xl border border-rose-200 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-300 placeholder:text-rose-300"
+            />
+            {errors.email && <p className="text-red-500 text-xs mt-1">Email is required</p>}
+          </div>
+
+          <div>
+            <input
+              {...register("password", { required: true })}
+              type="password"
+              placeholder="Password"
+              className="w-full h-12 px-4 rounded-2xl border border-rose-200 bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-300 placeholder:text-rose-300"
+            />
+            {errors.password && <p className="text-red-500 text-xs mt-1">Password is required</p>}
+          </div>
+
+          {serverError && <p className="text-red-500 text-xs mt-1">{serverError}</p>}
+
           <button
-            className="rounded-2xl cursor-pointer text-white h-[52px] bg-black w-[450px]"
             type="submit"
-            onClick={() => {
-              navigate("/Sign-in");
-            }}
+            disabled={loading}
+            className="h-12 bg-gradient-to-r from-rose-400 via-pink-400 to-lilac-400 text-white rounded-2xl font-medium hover:scale-[1.02] transition disabled:opacity-50"
           >
-            Login
+            {loading ? "Creating account…" : "Create account"}
           </button>
+        </form>
+
+        <div className="flex items-center gap-2 text-gray-400">
+          <hr className="flex-1 border-rose-200" />
+          <span className="text-xs">or</span>
+          <hr className="flex-1 border-rose-200" />
         </div>
-      )}
+
+        <div className="flex flex-col gap-3">
+          <button className="h-12 border border-rose-200 rounded-2xl bg-rose-50 hover:bg-rose-100 transition">Continue with Google</button>
+          <button className="h-12 border border-rose-200 rounded-2xl bg-rose-50 hover:bg-rose-100 transition">Continue with Apple</button>
+        </div>
+      </div>
     </div>
   );
 }
