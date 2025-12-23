@@ -148,11 +148,11 @@ export default function Homepage() {
       </form>
 
       {/* POSTS */}
-      <div className="flex flex-wrap gap-10 justify-center max-w-6xl">
+      <div className="flex flex-wrap min-h-screen gap-10 justify-center max-w-6xl">
         {posts.map((post) => (
           <div
             key={post._id}
-            className="group w-[310px] bg-white/85 backdrop-blur-xl p-6 rounded-[2.5rem] shadow-[0_15px_40px_rgba(216,180,254,0.35)] border border-pink-200 flex flex-col gap-4 hover:-translate-y-1 transition"
+            className="group w-[310px] bg-white/85 backdrop-blur-xl p-6 rounded-[2.5rem] shadow-[0_15px_40px_rgba(216,180,254,0.35)] border border-pink-200 flex flex-col h-full gap-4 hover:-translate-y-1 transition"
           >
             <div className="flex items-center gap-3">
               <img
@@ -193,6 +193,8 @@ export default function Homepage() {
                 </button>
               </div>
             )}
+
+            <p className="text-gray-400 text-xs">{post.date}</p>
 
             <div className="flex justify-between text-sm pt-2">
               <button
